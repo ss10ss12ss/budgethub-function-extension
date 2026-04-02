@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>トラブルシューティング</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --card: #ffffff;
+      --text: #000000;
+      --muted: #000000;
+      --line: #000000;
+      --accent: #000000;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo", sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.8;
+    }
+
+    main {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 32px 20px 56px;
+    }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 28px;
+    }
+
+    h1 {
+      margin: 0 0 6px;
+      font-size: 1.9rem;
+      letter-spacing: 0.02em;
+    }
+
+    .meta {
+      margin: 0 0 20px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    h2 {
+      margin: 28px 0 10px;
+      font-size: 1.15rem;
+      color: var(--accent);
+      border-left: 4px solid var(--accent);
+      padding-left: 10px;
+    }
+
+    p, li, td, th {
+      margin: 0 0 10px;
+      font-size: 0.98rem;
+    }
+
+    ol, ul {
+      padding-left: 20px;
+      margin: 6px 0 10px;
+    }
+
+    code {
+      font-family: "SF Mono", Menlo, monospace;
+      font-size: 0.86rem;
+      border: 1px solid var(--line);
+      padding: 2px 5px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0;
+    }
+
+    th, td {
+      border: 1px solid var(--line);
+      padding: 8px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: underline;
+      word-break: break-all;
+    }
+
+    .note {
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 0.93rem;
+    }
+
+    @media (max-width: 640px) {
+      .panel {
+        padding: 20px;
+        border-radius: 12px;
+      }
+
+      h1 {
+        font-size: 1.55rem;
+      }
+
+      h2 {
+        font-size: 1.05rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="panel">
+      <h1>トラブルシューティング</h1>
+      <p class="meta">最終更新日: 2026年4月2日</p>
+
+      <p>
+        資産設定を保存しても価格が表示されない場合は、入力内容とレスポンス仕様の両方を確認すると原因を見つけやすくなります。
+      </p>
+
+      <h2>よくある原因</h2>
+      <table>
+        <tr>
+          <th>症状</th>
+          <th>確認ポイント</th>
+        </tr>
+        <tr>
+          <td>価格が表示されない</td>
+          <td><code>endpoint URL</code> が正しいか、レスポンスに価格項目が含まれているか確認してください。</td>
+        </tr>
+        <tr>
+          <td>401 / 403 エラー</td>
+          <td>APIキーが無効、または対象サービスで利用権限が不足している可能性があります。</td>
+        </tr>
+        <tr>
+          <td>404 エラー</td>
+          <td>エンドポイントURLまたはシンボルが誤っている可能性があります。</td>
+        </tr>
+        <tr>
+          <td>429 エラー</td>
+          <td>APIの利用回数制限に達している可能性があります。時間をおいて再度お試しください。</td>
+        </tr>
+        <tr>
+          <td>為替のカスタムAPIが使われない</td>
+          <td>現在の実装では、為替は <code>endpoint URL</code> と <code>APIキー</code> の両方を保存したときだけカスタムAPIを使用します。</td>
+        </tr>
+        <tr>
+          <td>為替シンボルで保存できない</td>
+          <td>為替は <code>USD/JPY</code> の形式で入力してください。</td>
+        </tr>
+      </table>
+
+      <h2>確認手順</h2>
+      <ol>
+        <li><code>設定 → 利用設定 → 資産設定 → 拡張</code> で対象の資産種別を開きます。</li>
+        <li><code>endpoint URL</code> と <code>APIキー</code> の入力内容を確認します。</li>
+        <li>保有追加時のシンボルが正しいか確認します。</li>
+        <li>APIのレスポンスに <code>price</code> など対応フィールドが含まれているか確認します。</li>
+        <li>必要に応じて <a href="api-spec.html">API仕様</a> を見直します。</li>
+      </ol>
+
+      <h2>関連ページ</h2>
+      <ul>
+        <li><a href="setup.html">セットアップガイド</a></li>
+        <li><a href="api-spec.html">API仕様</a></li>
+        <li><a href="forex.html">為替設定</a></li>
+      </ul>
+
+      <p class="note">
+        外部サービスのメンテナンスや仕様変更により、一時的に価格取得が不安定になる場合があります。
+      </p>
+    </section>
+  </main>
+</body>
+</html>

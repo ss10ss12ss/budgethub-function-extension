@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>API仕様</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --card: #ffffff;
+      --text: #000000;
+      --muted: #000000;
+      --line: #000000;
+      --accent: #000000;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo", sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.8;
+    }
+
+    main {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 32px 20px 56px;
+    }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 28px;
+    }
+
+    h1 {
+      margin: 0 0 6px;
+      font-size: 1.9rem;
+      letter-spacing: 0.02em;
+    }
+
+    .meta {
+      margin: 0 0 20px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    h2 {
+      margin: 28px 0 10px;
+      font-size: 1.15rem;
+      color: var(--accent);
+      border-left: 4px solid var(--accent);
+      padding-left: 10px;
+    }
+
+    h3 {
+      margin: 20px 0 8px;
+      font-size: 1rem;
+    }
+
+    p, li, td, th {
+      margin: 0 0 10px;
+      font-size: 0.98rem;
+    }
+
+    ul {
+      padding-left: 20px;
+      margin: 6px 0 10px;
+    }
+
+    code {
+      font-family: "SF Mono", Menlo, monospace;
+      font-size: 0.86rem;
+      border: 1px solid var(--line);
+      padding: 2px 5px;
+    }
+
+    pre {
+      margin: 8px 0 16px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      overflow-x: auto;
+      font-size: 0.86rem;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    pre code {
+      border: none;
+      padding: 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0;
+    }
+
+    th, td {
+      border: 1px solid var(--line);
+      padding: 8px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: underline;
+      word-break: break-all;
+    }
+
+    .note {
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 0.93rem;
+    }
+
+    @media (max-width: 640px) {
+      .panel {
+        padding: 20px;
+        border-radius: 12px;
+      }
+
+      h1 {
+        font-size: 1.55rem;
+      }
+
+      h2 {
+        font-size: 1.05rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="panel">
+      <h1>API仕様</h1>
+      <p class="meta">最終更新日: 2026年4月2日</p>
+
+      <p>
+        BudgetHub の資産設定で保存したカスタムAPIは、資産種別ごとに同じ基本形式で呼び出されます。
+        ここでは、現在のアプリ実装で扱うリクエストとレスポンスの条件を案内します。
+      </p>
+
+      <h2>リクエスト形式</h2>
+      <p>カスタムAPIには <code>GET</code> でアクセスします。</p>
+      <pre><code>GET {endpointURL}?symbol={SYMBOL}&amp;apikey={APIKEY}</code></pre>
+      <p><code>APIキー</code> が入力されている場合は、クエリに加えて次のヘッダーも送信します。</p>
+      <pre><code>X-API-Key: {APIKEY}
+Authorization: Bearer {APIKEY}</code></pre>
+      <p><code>APIキー</code> を空で保存している場合は、ヘッダーは付きません。</p>
+
+      <h2>レスポンス形式</h2>
+      <p>レスポンスは JSON を想定しています。現在価格としては、次のいずれかのフィールド名を認識します。</p>
+      <table>
+        <tr>
+          <th>項目</th>
+          <th>対応フィールド</th>
+        </tr>
+        <tr>
+          <td>現在価格</td>
+          <td><code>price</code>, <code>close</code>, <code>c</code>, <code>last</code>, <code>current</code>, <code>latestPrice</code>, <code>regularMarketPrice</code></td>
+        </tr>
+        <tr>
+          <td>通貨</td>
+          <td><code>currency</code></td>
+        </tr>
+        <tr>
+          <td>前日終値</td>
+          <td><code>previousClose</code>, <code>pc</code></td>
+        </tr>
+        <tr>
+          <td>前月比較用</td>
+          <td><code>previousMonth</code></td>
+        </tr>
+        <tr>
+          <td>前年比較用</td>
+          <td><code>previousYear</code></td>
+        </tr>
+      </table>
+
+      <h2>レスポンス例</h2>
+      <h3>基本形</h3>
+      <pre><code>{
+  "price": 150.25,
+  "currency": "USD",
+  "previousClose": 149.80
+}</code></pre>
+
+      <h3>ネストされた形</h3>
+      <p>トップレベルまたは1階層目のオブジェクト内にある項目を認識します。</p>
+      <pre><code>{
+  "data": {
+    "price": 150.25,
+    "currency": "USD"
+  }
+}</code></pre>
+
+      <h2>よくあるエラー</h2>
+      <ul>
+        <li><code>401 / 403</code>: APIキーが無効、またはアクセス権限がありません。</li>
+        <li><code>404</code>: エンドポイントURLまたはシンボルが正しくありません。</li>
+        <li><code>429</code>: APIの利用回数制限に達しています。</li>
+        <li>価格が表示されない: レスポンスに価格フィールドが含まれていない可能性があります。</li>
+      </ul>
+
+      <h2>関連ページ</h2>
+      <ul>
+        <li><a href="setup.html">セットアップガイド</a></li>
+        <li><a href="forex.html">為替設定</a></li>
+        <li><a href="troubleshooting.html">トラブルシューティング</a></li>
+      </ul>
+
+      <p class="note">
+        このページはアプリの現在実装に合わせた仕様です。外部API側の仕様が異なる場合は、BudgetHub が認識できる形に整えてご利用ください。
+      </p>
+    </section>
+  </main>
+</body>
+</html>
