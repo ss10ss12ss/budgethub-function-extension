@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>API仕様</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --card: #ffffff;
+      --text: #000000;
+      --muted: #000000;
+      --line: #000000;
+      --accent: #000000;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo", sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.8;
+    }
+
+    main {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 32px 20px 56px;
+    }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 28px;
+    }
+
+    h1 {
+      margin: 0 0 6px;
+      font-size: 1.9rem;
+      letter-spacing: 0.02em;
+    }
+
+    .meta {
+      margin: 0 0 20px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    h2 {
+      margin: 28px 0 10px;
+      font-size: 1.15rem;
+      color: var(--accent);
+      border-left: 4px solid var(--accent);
+      padding-left: 10px;
+    }
+
+    h3 {
+      margin: 20px 0 8px;
+      font-size: 1rem;
+    }
+
+    p, li, td, th {
+      margin: 0 0 10px;
+      font-size: 0.98rem;
+    }
+
+    ul {
+      padding-left: 20px;
+      margin: 6px 0 10px;
+    }
+
+    code {
+      font-family: "SF Mono", Menlo, monospace;
+      font-size: 0.86rem;
+      border: 1px solid var(--line);
+      padding: 2px 5px;
+    }
+
+    pre {
+      margin: 8px 0 16px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      overflow-x: auto;
+      font-size: 0.86rem;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    pre code {
+      border: none;
+      padding: 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0;
+    }
+
+    th, td {
+      border: 1px solid var(--line);
+      padding: 8px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: underline;
+      word-break: break-all;
+    }
+
+    .note {
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 0.93rem;
+    }
+
+    @media (max-width: 640px) {
+      .panel {
+        padding: 20px;
+        border-radius: 12px;
+      }
+
+      h1 {
+        font-size: 1.55rem;
+      }
+
+      h2 {
+        font-size: 1.05rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="panel">
+      <h1>API仕様</h1>
+      <p class="meta">最終更新日: 2026年4月2日</p>
+
+      <p>
+        BudgetHub は、拡張設定に保存された価格エンドポイントURLと時系列エンドポイントURLを使用して <code>GET</code> リクエストを送信し、価格データを取得します。
+      </p>
+
+      <h2>プレースホルダー一覧</h2>
+      <p>URLにプレースホルダーを含めると、アプリが実行時に実際の値に置換します。</p>
+      <table>
+        <tr>
+          <th>プレースホルダー</th>
+          <th>置換される値</th>
+        </tr>
+        <tr>
+          <td><code>{SYMBOL}</code></td>
+          <td>シンボル（大文字に変換）</td>
+        </tr>
+        <tr>
+          <td><code>{symbol}</code></td>
+          <td>シンボル（小文字に変換）</td>
+        </tr>
+        <tr>
+          <td><code>{KEY}</code></td>
+          <td>APIキー欄の値</td>
+        </tr>
+        <tr>
+          <td><code>{FROM}</code></td>
+          <td>5年前の日付（YYYY-MM-DD）</td>
+        </tr>
+        <tr>
+          <td><code>{TO}</code></td>
+          <td>今日の日付（YYYY-MM-DD）</td>
+        </tr>
+        <tr>
+          <td><code>{FROM_UNIX}</code></td>
+          <td>5年前のUnixタイムスタンプ（秒）</td>
+        </tr>
+        <tr>
+          <td><code>{TO_UNIX}</code></td>
+          <td>現在のUnixタイムスタンプ（秒）</td>
+        </tr>
+      </table>
+
+      <h2>自動付加（プレースホルダーなしの場合）</h2>
+      <p>
+        URLにプレースホルダーが一切含まれていない場合、アプリは以下のクエリパラメータを自動的に付加します。
+      </p>
+      <ul>
+        <li><code>symbol={シンボル}</code> — ただし <code>ids</code>・<code>pair</code> がURL内に既に存在する場合は付加しません。</li>
+        <li><code>apikey={APIキー}</code> — ただし <code>apikey</code>・<code>api_key</code>・<code>token</code>・<code>access_key</code>・<code>api_token</code> がURL内に既に存在する場合は付加しません。APIキーが空の場合も付加しません。</li>
+      </ul>
+
+      <h2>リクエスト</h2>
+      <p>カスタムAPIには <code>GET</code> でアクセスします。APIキーが入力されている場合は、クエリパラメータに加えて以下のヘッダーも送信します。</p>
+      <pre><code>X-API-Key: {APIキー}
+Authorization: Bearer {APIキー}</code></pre>
+      <p>APIキー欄が空の場合、ヘッダーは付きません。</p>
+
+      <h2>レスポンス形式（価格）</h2>
+      <p>レスポンスは JSON を想定しています。以下のフィールド名を認識します。</p>
+      <table>
+        <tr>
+          <th>項目</th>
+          <th>対応フィールド</th>
+        </tr>
+        <tr>
+          <td>現在価格</td>
+          <td><code>price</code>, <code>close</code>, <code>c</code>, <code>last</code>, <code>current</code>, <code>latestPrice</code>, <code>regularMarketPrice</code>, <code>rate</code>, <code>amount</code></td>
+        </tr>
+        <tr>
+          <td>通貨</td>
+          <td><code>currency</code></td>
+        </tr>
+        <tr>
+          <td>前日終値</td>
+          <td><code>previousClose</code>, <code>pc</code></td>
+        </tr>
+      </table>
+      <p>トップレベルまたは1〜3階層目のオブジェクト内にある項目を認識します。配列の先頭要素も対応しています。</p>
+
+      <h2>レスポンス形式（時系列）</h2>
+      <p>時系列データはチャート表示に使用されます。以下の4つの形式を認識します。</p>
+
+      <h3>1. オブジェクト配列</h3>
+      <p>キー名: <code>values</code>, <code>historical</code>, <code>results</code>, <code>data</code>, <code>records</code></p>
+      <pre><code>{ "historical": [
+  { "date": "2026-04-01", "close": 150.25 },
+  { "date": "2026-03-31", "close": 149.80 }
+] }</code></pre>
+
+      <h3>2. 並列配列</h3>
+      <pre><code>{
+  "c": [150.25, 149.80],
+  "t": [1712534400, 1712448000]
+}</code></pre>
+
+      <h3>3. 配列の配列</h3>
+      <p>index 0 がタイムスタンプ、index 4 が終値として認識されます。</p>
+      <pre><code>[
+  [1712534400000, "149.00", "151.00", "148.50", "150.25", "1000"],
+  [1712448000000, "148.00", "150.00", "147.50", "149.80", "900"]
+]</code></pre>
+
+      <h3>4. 日付マップ</h3>
+      <pre><code>{
+  "Time Series (Daily)": {
+    "2026-04-01": { "4. close": "150.25" },
+    "2026-03-31": { "4. close": "149.80" }
+  }
+}</code></pre>
+
+      <h2>関連ページ</h2>
+      <ul>
+        <li><a href="./index.html">使用説明トップ</a></li>
+        <li><a href="./setup.html">セットアップガイド</a></li>
+        <li><a href="./forex.html">為替設定</a></li>
+        <li><a href="./troubleshooting.html">トラブルシューティング</a></li>
+      </ul>
+
+      <p class="note">
+        レスポンスがここに記載されている形式と異なる場合、価格やチャートが正しく表示されないことがあります。
+      </p>
+    </section>
+  </main>
+</body>
+</html>

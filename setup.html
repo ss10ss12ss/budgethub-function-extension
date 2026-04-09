@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>セットアップガイド</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --card: #ffffff;
+      --text: #000000;
+      --muted: #000000;
+      --line: #000000;
+      --accent: #000000;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo", sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.8;
+    }
+
+    main {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 32px 20px 56px;
+    }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 28px;
+    }
+
+    h1 {
+      margin: 0 0 6px;
+      font-size: 1.9rem;
+      letter-spacing: 0.02em;
+    }
+
+    .meta {
+      margin: 0 0 20px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    h2 {
+      margin: 28px 0 10px;
+      font-size: 1.15rem;
+      color: var(--accent);
+      border-left: 4px solid var(--accent);
+      padding-left: 10px;
+    }
+
+    p, li {
+      margin: 0 0 10px;
+      font-size: 0.98rem;
+    }
+
+    ol, ul {
+      padding-left: 20px;
+      margin: 6px 0 10px;
+    }
+
+    code {
+      font-family: "SF Mono", Menlo, monospace;
+      font-size: 0.86rem;
+      border: 1px solid var(--line);
+      padding: 2px 5px;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: underline;
+      word-break: break-all;
+    }
+
+    .note {
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 0.93rem;
+    }
+
+    @media (max-width: 640px) {
+      .panel {
+        padding: 20px;
+        border-radius: 12px;
+      }
+
+      h1 {
+        font-size: 1.55rem;
+      }
+
+      h2 {
+        font-size: 1.05rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="panel">
+      <h1>セットアップガイド</h1>
+      <p class="meta">最終更新日: 2026年4月2日</p>
+
+      <p>
+        BudgetHub の資産設定では、資産種別ごとにカスタムAPIを利用できます。
+        拡張設定画面で必要な情報を入力し、保存してください。
+      </p>
+
+      <h2>設定の流れ</h2>
+      <ol>
+        <li><code>設定 → 利用設定 → 資産設定 → 拡張</code> を開きます。</li>
+        <li>設定したい資産種別を選びます。</li>
+        <li><strong>価格エンドポイントURL</strong> 欄に、現在価格を返すAPIのフルURLを入力します。</li>
+        <li>必要に応じて <strong>時系列エンドポイントURL</strong> 欄に、日次の過去データを返すAPIのフルURLを入力します。</li>
+        <li>APIキーが必要なサービスでは <strong>APIキー</strong> 欄にキーを入力します。</li>
+        <li><code>保存</code> をタップします。</li>
+        <li><code>資産</code> 画面から保有を追加し、名称・シンボル・保有数量を登録します。</li>
+      </ol>
+
+      <h2>3つの入力欄</h2>
+      <p>拡張設定には以下の3つの入力欄があります。</p>
+      <ul>
+        <li><strong>価格エンドポイントURL</strong> — 現在価格を返すAPIのフルURL。</li>
+        <li><strong>時系列エンドポイントURL</strong> — 日次の過去データ（チャート用）を返すAPIのフルURL。</li>
+        <li><strong>APIキー</strong> — APIサービスで発行されたキー。不要な場合は空のまま。</li>
+      </ul>
+      <p>価格URLと時系列URLはどちらか一方だけでも保存できます。両方入力するとチャート表示も有効になります。</p>
+
+      <h2>プレースホルダー</h2>
+      <p>URLの中にプレースホルダーを記述すると、アプリが実行時に実際の値に置換します。</p>
+      <ul>
+        <li><code>{SYMBOL}</code> — シンボル（大文字に変換）</li>
+        <li><code>{symbol}</code> — シンボル（小文字に変換）</li>
+        <li><code>{KEY}</code> — APIキー欄の値</li>
+        <li><code>{FROM}</code> — 5年前の日付（YYYY-MM-DD形式）</li>
+        <li><code>{TO}</code> — 今日の日付（YYYY-MM-DD形式）</li>
+        <li><code>{FROM_UNIX}</code> — 5年前のUnixタイムスタンプ（秒）</li>
+        <li><code>{TO_UNIX}</code> — 現在のUnixタイムスタンプ（秒）</li>
+      </ul>
+      <p>プレースホルダーが含まれていない場合は、<code>symbol</code> と <code>apikey</code> がクエリパラメータとして自動付加されます。詳しくは <a href="./api-spec.html">API仕様</a> をご覧ください。</p>
+
+      <h2>保有追加時の入力</h2>
+      <ul>
+        <li><strong>名称</strong>: 任意です。空の場合でも登録できます。</li>
+        <li><strong>シンボル</strong>: 利用するAPIサービスで使われる値を入力します。</li>
+        <li><strong>保有数量</strong>: 数量または口数を入力します。</li>
+      </ul>
+
+      <h2>為替</h2>
+      <p>
+        為替は標準設定のままでも利用できます。カスタムAPIを利用したい場合は
+        <a href="./forex.html">為替設定</a> をご覧ください。
+      </p>
+
+      <h2>関連ページ</h2>
+      <ul>
+        <li><a href="./index.html">使用説明トップ</a></li>
+        <li><a href="./api-spec.html">API仕様</a></li>
+        <li><a href="./forex.html">為替設定</a></li>
+        <li><a href="./troubleshooting.html">トラブルシューティング</a></li>
+      </ul>
+
+      <p class="note">
+        外部APIを利用する場合は、各サービスの仕様と利用条件を事前にご確認ください。
+      </p>
+    </section>
+  </main>
+</body>
+</html>
